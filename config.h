@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with SIO2Arduino; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ */
 #ifndef CONFIG_H
 #define CONFIG_H
 
@@ -30,11 +30,11 @@
 // These are the Arduino devices that can be used. I'm sure others would work,
 // but these are the only ones I have to test with. Only one of these should
 // be uncommented.
-#define ARDUINO_UNO              // Arduino Uno board
-//#define ARDUINO_MEGA           // Arduino Mega 2560/ADK board
+//#define ARDUINO_UNO              // Arduino Uno board
+#define ARDUINO_MEGA           // Arduino Mega 2560/ADK board
 
 // Uncomment this line if you are using an LCD display
-//#define LCD_DISPLAY
+#define LCD_DISPLAY
 
 // Uncomment this line if you are using a hardware button for image selection
 #define SELECTOR_BUTTON
@@ -43,89 +43,90 @@
 //#define RESET_BUTTON
 
 // uncomment if using an Ethernet shield for SD capabilities
-//#define ETHERNET_SHIELD
+#define ETHERNET_SHIELD
 
 // uncomment for PRO image format support
-//#define PRO_IMAGES
+#define PRO_IMAGES
 
 // uncomment for ATX image format support (Mega 2560 only)
-//#define ATX_IMAGES
+#define ATX_IMAGES
 
 // uncomment for XEX "image" support
 #define XEX_IMAGES
 
 // uncomment this to enable debug logging -- make sure the HARDWARE_UART isn't the same as
 // the LOGGING_UART defined at the bottom of the file
-//#define DEBUG 
+#define DEBUG 
 
 /*
  * These are the Arduino pin definitions.
  */
- 
-#define PIN_ATARI_CMD         2    // the Atari SIO command line - usually the purple wire on the SIO cable
+
+#define PIN_ATARI_CMD         22    // the Atari SIO command line - usually the purple wire on the SIO cable
 
 // for now, you can't change these pin definitions
 #ifdef ETHERNET_SHIELD
-  #define PIN_SD_CS           4    // the SD CS line
+#define PIN_SD_CS           4    // the SD CS line
 #else
-  #ifdef ARDUINO_MEGA
-    #define PIN_SD_CS         53   // the SD breakout board's CS (chip select) pin
-    #define PIN_SD_DI         51   // the SD breakout board's DI pin
-    #define PIN_SD_DO         50   // the SD breakout board's DO pin
-    #define PIN_SD_CLK        52   // the SD breakout board's CLK pin
-  #else
-    #define PIN_SD_CS         10   // the SD breakout board's CS (chip select) pin
-    #define PIN_SD_DI         11   // the SD breakout board's DI pin
-    #define PIN_SD_DO         12   // the SD breakout board's DO pin
-    #define PIN_SD_CLK        13   // the SD breakout board's CLK pin
-  #endif
+#ifdef ARDUINO_MEGA
+#define PIN_SD_CS         53   // the SD breakout board's CS (chip select) pin
+#define PIN_SD_DI         51   // the SD breakout board's DI pin
+#define PIN_SD_DO         50   // the SD breakout board's DO pin
+#define PIN_SD_CLK        52   // the SD breakout board's CLK pin
+#else
+#define PIN_SD_CS         10   // the SD breakout board's CS (chip select) pin
+#define PIN_SD_DI         11   // the SD breakout board's DI pin
+#define PIN_SD_DO         12   // the SD breakout board's DO pin
+#define PIN_SD_CLK        13   // the SD breakout board's CLK pin
+#endif
 #endif
 
 #ifdef SELECTOR_BUTTON
-  #define PIN_SELECTOR        3    // the selector button pin
+#define PIN_SELECTOR        53    // the selector button pin
 #endif
 
 #ifdef RESET_BUTTON
-  #define PIN_RESET           3    // the reset button pin
+#define PIN_RESET           49    // the reset button pin
 #endif
 
 #ifdef LCD_DISPLAY
-  #ifdef ARDUINO_MEGA
-    #define PIN_LCD_RD          5    // *
-    #define PIN_LCD_ENABLE      6    // *
-    #define PIN_LCD_DB4         10   // * LCD display pins
-    #define PIN_LCD_DB5         9    // *
-    #define PIN_LCD_DB6         8    // *
-    #define PIN_LCD_DB7         7    // *
-  #else
-    #define PIN_LCD_RD          4    // *
-    #define PIN_LCD_ENABLE      5    // *
-    #define PIN_LCD_DB4         9    // * LCD display pins
-    #define PIN_LCD_DB5         8    // *
-    #define PIN_LCD_DB6         7    // *
-    #define PIN_LCD_DB7         6    // *
-  #endif
+#ifdef ARDUINO_MEGA
+#define PIN_LCD_RD          8    // *
+#define PIN_LCD_ENABLE      9    // *
+#define PIN_LCD_DB4         4   // * LCD display pins
+#define PIN_LCD_DB5         5    // *
+#define PIN_LCD_DB6         6    // *
+#define PIN_LCD_DB7         7    // *
+#else
+#define PIN_LCD_RD          4    // *
+#define PIN_LCD_ENABLE      5    // *
+#define PIN_LCD_DB4         9    // * LCD display pins
+#define PIN_LCD_DB5         8    // *
+#define PIN_LCD_DB6         7    // *
+#define PIN_LCD_DB7         6    // *
+#endif
 #endif
 
 // the hardware UART to use for SIO bus communication
 #ifdef ARDUINO_MEGA
-  #define SIO_UART     Serial1
-  #define SIO_CALLBACK serialEvent1
+#define SIO_UART     Serial1
+#define SIO_CALLBACK serialEvent1
 #else
-  #define SIO_UART     Serial
-  #define SIO_CALLBACK serialEvent
+#define SIO_UART     Serial
+#define SIO_CALLBACK serialEvent
 #endif
 
 /**
  * Logging/debug config
  */
 #ifdef DEBUG
-  #define LOGGING_UART Serial
-  #define LOG_MSG(...) LOGGING_UART.print(__VA_ARGS__)
-  #define LOG_MSG_CR(...) LOGGING_UART.println(__VA_ARGS__)
+#define LOGGING_UART Serial
+#define LOG_MSG(...) LOGGING_UART.print(__VA_ARGS__)
+#define LOG_MSG_CR(...) LOGGING_UART.println(__VA_ARGS__)
 #else
-  #define LOG_MSG(...)
-  #define LOG_MSG_CR(...)
+#define LOG_MSG(...)
+#define LOG_MSG_CR(...)
 #endif
 
 #endif
+

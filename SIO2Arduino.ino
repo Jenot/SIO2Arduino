@@ -33,6 +33,19 @@
 /**
  * Global variables
  */
+#ifdef LCD_DISPLAY
+char msgs[5][15] = {"Select Key OK",//"Right Key OK ", 
+                    "Right Key OK",//"Up Key OK    ", 
+                    "Up Key OK    ",//"Down Key OK  ", 
+                    "Down Key OK  ",//"Left Key OK  ", 
+                    "Left Key OK  "};
+int  adc_key_val[5] ={20, 270, 520, 690, 880};
+int NUM_KEYS = 5;
+int adc_key_in;
+int key=-1;
+int oldkey=-1;
+#endif
+
 DriveAccess driveAccess(getDeviceStatus, readSector, writeSector, format);
 DriveControl driveControl(getFileList, mountFileIndex, changeDirectory);
 SIOChannel sioChannel(PIN_ATARI_CMD, &SIO_UART, &driveAccess, &driveControl);
@@ -73,41 +86,41 @@ void setup() {
   #ifdef LCD_DISPLAY
   // set up LCD if appropriate
   lcd.begin(16, 2);
-  lcd.print("SIO2Arduino");
+  lcd.print("S2A by Jenot");
   lcd.setCursor(0,1);
   #endif
 
   // initialize SD card
-  LOG_MSG("Initializing SD card...");
+  LOG_MSG("Inicjalizacja SD");
   pinMode(PIN_SD_CS, OUTPUT);
 
   if (!card.init(SPI_HALF_SPEED, PIN_SD_CS)) {
-    LOG_MSG_CR(" failed.");
+    LOG_MSG_CR(" nieudana.");
     #ifdef LCD_DISPLAY
-      lcd.print("SD Init Error");
+      lcd.print("Brak karty?");
     #endif     
     return;
   }
   
   if (!volume.init(&card)) {
-    LOG_MSG_CR(" failed.");
+    LOG_MSG_CR(" nieudana.");
     #ifdef LCD_DISPLAY
-      lcd.print("SD Volume Error");
+      lcd.print("Blad dysku");
     #endif     
     return;
   }
 
   if (!currDir.openRoot(&volume)) {
-    LOG_MSG_CR(" failed.");
+    LOG_MSG_CR(" nieudana.");
     #ifdef LCD_DISPLAY
-      lcd.print("SD Root Error");
+      lcd.print("Blad kat. glownego");
     #endif     
     return;
   }
 
-  LOG_MSG_CR(" done.");
+  LOG_MSG_CR(" udana.");
   #ifdef LCD_DISPLAY
-    lcd.print("READY");
+    lcd.print("GOTOWE");
   #endif
 }
 
@@ -117,11 +130,39 @@ void loop() {
   
   #ifdef SELECTOR_BUTTON
   // watch the selector button (accounting for debounce)
-  if (digitalRead(PIN_SELECTOR) == HIGH && millis() - lastSelectionPress > 250) {
+  if (digitalRead(PIN_SELECTOR) == LOW && millis() - lastSelectionPress > 250) {
     lastSelectionPress = millis();
     changeDisk(0);
   }
   #endif
+  
+//poczatek obslugi klawiatury LCD  
+#ifdef LCD_DISPLAY
+    adc_key_in = analogRead(0);    // read the value from the sensor
+    key = get_key(adc_key_in);		        // convert into key press
+	
+	if (key != oldkey)				    // if keypress is detected
+	{
+    delay(50);		// wait for debounce time
+		adc_key_in = analogRead(0);    // read the value from the sensor  
+    key = get_key(adc_key_in);		        // convert into key press
+    if (key != oldkey)				
+    {			
+      oldkey = key;
+    }
+}
+if (key==0 && millis() - lastSelectionPress > 250) {
+    lastSelectionPress = millis();
+    changeDisk(0);
+  }
+//if (key==4 && millis() - lastResetPress > 250) {
+//    lastResetPress = millis();
+//    mountFilename(0, "AUTORUN.ATR");
+//}
+#endif
+//Koniec obslugi klawiatury LCD
+
+//  #endif
   
   #ifdef RESET_BUTTON
   // watch the reset button
@@ -341,4 +382,22 @@ boolean mountFilename(int deviceId, char *name) {
   }
   
   return false;
+}
+int get_key(unsigned int input)
+{
+	int k;
+    
+	for (k = 0; k < NUM_KEYS; k++)
+	{
+		if (input < adc_key_val[k])
+		{
+           
+    return k;
+        }
+	}
+    
+    if (k >= NUM_KEYS)
+        k = -1;     // No valid key pressed
+    
+    return k;
 }
